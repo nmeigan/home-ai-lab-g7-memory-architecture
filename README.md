@@ -10,9 +10,10 @@ Every "run an LLM locally" tutorial assumes either a modern GPU or that you'll s
 
 ## What's in here
 
-- [`PLAYBOOK.md`](PLAYBOOK.md) — the exact, ordered steps: boot repair, storage layout, WSL2 memory/swap tuning, page file sizing, model selection
-- [`ARCHITECTURE.md`](ARCHITECTURE.md) — the memory architecture diagram and reasoning behind the 58GB simulated unified memory pool
+- [`PLAYBOOK.md`](PLAYBOOK.md) — the exact, ordered steps: boot repair, storage layout, WSL2 memory/swap tuning, page file sizing, GPU-offload capping, model selection
+- [`ARCHITECTURE.md`](ARCHITECTURE.md) — the memory architecture diagram, the 58GB simulated unified memory pool, and the model-tier decision framework
 - [`RESULTS.md`](RESULTS.md) — the real numbers: what model sizes run, at what speed, on this exact hardware
+- [`SOVEREIGNTY-AND-ESG.md`](SOVEREIGNTY-AND-ESG.md) — the business case: cost, ESG, and AI sovereignty as one architecture decision, read three ways
 
 ## Hardware baseline
 
@@ -34,6 +35,16 @@ A 58GB functional memory pool (26GB physical RAM allocated to WSL2 + 32GB NVMe-b
 
 See [`RESULTS.md`](RESULTS.md) for the full breakdown and frontier-model baseline comparisons.
 
+## Why this is a board-level question, not just a hobby project
+
+- **Opportunity cost** — hardware already depreciated to zero on the books, converted into productive inference capacity instead of e-waste.
+- **Sunk cost recovery** — the "replace it" instinct is the expensive default; memory tuning recovers a capital asset instead of writing it off.
+- **Token economics** — every token an LLM generates is billed, directly or as amortized infrastructure cost; bulk/repetitive inference on owned hardware runs at $0 marginal cost per run.
+- **ESG** — no new GPU manufactured (manufacturing, not runtime draw, is the dominant share of a GPU's lifecycle carbon footprint), load kept off hyperscale data-center cooling and grid draw.
+- **AI sovereignty & responsible AI** — inference runs entirely on hardware you control; no prompt, output, or byte of data routes through a third-party model provider to get an answer.
+
+Full breakdown: [`SOVEREIGNTY-AND-ESG.md`](SOVEREIGNTY-AND-ESG.md).
+
 ## License
 
-Documentation and scripts in this repo are shared for reference. No warranty — verify against your own hardware before running destructive disk operations (`diskpart`, partition changes) from `PLAYBOOK.md`.
+MIT License — see [`LICENSE`](LICENSE). Documentation and scripts in this repo are shared for reference; no warranty — verify against your own hardware before running destructive disk operations (`diskpart`, partition changes) from `PLAYBOOK.md`.

@@ -31,6 +31,29 @@ Swap is not extra RAM — it's an emergency overflow lane, roughly 7x slower tha
 2. **The Windows page file** — a separate, system-level virtual memory mechanism, sized against the actual NVMe drive's real throughput rather than a generic "1.5x RAM" rule written for much slower disks.
 3. **GPU VRAM (4GB)** — too small to hold a meaningful fraction of a 14B+ model's weights, so it's used for the first few layers only; the bulk of the work happens in the RAM/swap tiers above.
 
+## Model-tier decision framework
+
+```
+                 Does the model fit in
+                 physical RAM alone?
+                        │
+           ┌────────────┴────────────┐
+          YES                        NO
+           │                          │
+   Runs fully in RAM          Does it fit RAM + swap
+   10–25 tok/s                without exceeding disk?
+   Daily-driver tier                  │
+                          ┌───────────┴───────────┐
+                         YES                      NO
+                          │                        │
+                 Loads, runs at          Does not fit —
+                 0.2–1.5 tok/s           not a candidate
+                 Ceiling-test only,      on this hardware
+                 not daily use
+```
+
+This is the same framework a cloud-inference cost decision uses — "does this workload need the expensive fast path, or can it tolerate the cheap slow path" — expressed in hardware tiers instead of a billing tier.
+
 ## What this replaces
 
 Standing default advice is "buy a GPU with more VRAM" or "rent cloud GPU time." This architecture instead treats an already-owned, already-depreciated laptop as the substrate, and treats memory tiering — not model-shrinking, not new silicon — as the primary lever for how large a model that substrate can usefully run.

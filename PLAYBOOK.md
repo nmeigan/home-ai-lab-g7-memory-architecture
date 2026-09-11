@@ -99,7 +99,17 @@ export OLLAMA_HOST=$(ip route | grep default | awk '{print $3}'):11434
 curl http://localhost:11434   # sanity check via the gateway IP, not "localhost"
 ```
 
-## 7. Choosing a model tier
+## 7. Capping GPU offload against measured usage, not a guess
+
+Never assume a fixed VRAM budget — measure it. With a model loaded, watch actual usage:
+
+```
+nvidia-smi
+```
+
+Tune the inference engine's GPU-offload/layer-count setting against that measured number, not a guessed layer count. On a 4GB-VRAM card, ~2.5GB was the stable usable ceiling here; the remaining layers spill to CPU/RAM. If GPU offload proves unstable for a given model at any setting, fall back to CPU-only (`num_gpu=0` in Ollama terms) rather than forcing an unstable configuration — an unstable GPU offload crashes mid-generation, which is worse than a slower but reliable CPU-only run.
+
+## 8. Choosing a model tier
 
 See `RESULTS.md` for the measured speed/quality tradeoffs. As a starting rule of thumb on a 26GB physical + 32GB swap pool:
 - **14B class** (~9GB): fits fully in RAM, fast, everyday chat/reasoning
